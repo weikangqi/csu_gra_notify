@@ -1,0 +1,14 @@
+{ 
+    "mail":
+    { "mail_host": "smtp.163.com",
+      "mail_user": "kangqi_wei@163.com",
+      "mail_pass": "EAYXLPTTIGYHSTPS",
+      "sender": "kangqi_wei@163.com",
+      "receivers": ["3271045267@qq.com"],
+      "title":"CSU_Graduate_News"
+    },
+    "website":"https://gra.csu.edu.cn/yjsytz.htm",
+    "log":true,
+    "times":4
+
+}
