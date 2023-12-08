@@ -6,7 +6,7 @@ import smtplib
 from email.mime.text import MIMEText
 import logging
 import json
-
+import sqlite3
 last_news = ""
 
 
@@ -24,9 +24,7 @@ def email(config,title,content):
     #发送方信息
     message['From'] = sender 
     #接受方信息     
-    message['To'] = receivers[0]  
-
-    #登录并发送邮件
+    # message['To'] = receivers[0] 
     try:
         smtpObj = smtplib.SMTP() 
         #连接到服务器
@@ -34,8 +32,9 @@ def email(config,title,content):
         #登录到服务器
         smtpObj.login(mail_user,mail_pass) 
         #发送
-        smtpObj.sendmail(
-            sender,receivers,message.as_string()) 
+        for i in receivers:
+            smtpObj.sendmail(
+                sender,i,message.as_string()) 
         #退出
         smtpObj.quit() 
         print('success')
@@ -44,24 +43,36 @@ def email(config,title,content):
 def main():
     with open('set.json', 'r') as file:
         config = json.load(file)
-    schedule.every(4).hours.do(job,config)
+    conn = sqlite3.connect('news.db')
+    cursor = conn.cursor()
+    schedule.every(30).minutes.do(job,(config,cursor,conn))
     while True:
         schedule.run_pending()
         time.sleep(1)
+    
 
-def job(config):
-    global last_news
+def job(parm):
+    
+    config,cursor,conn = parm
     print(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())))
     test = request.get_html(config["website"])
-    news = test[0]
-    if news != last_news:
-        email(config,news,f"{test[0]}\n{test[1]}")
-        print("send email")
-        last_news = news
-    else:
-        print("no news")
+    print(test)
+    buffer = []
+    for i in test: 
+        cursor.execute(f"SELECT * FROM my_table WHERE string1 = ?  OR string2 = ?",i)
+        result = cursor.fetchall()
+        if result == []:
+            buffer.append(i)
+            cursor.execute(f"INSERT INTO my_table (string1, string2) VALUES (?, ?)",i)
+            conn.commit()
+        else:
+            print("no news")
+    for i in buffer:
+        email(config,i[0],i[1])
+
 if __name__ == '__main__':
-    # with open('set.json', 'r') as file:
-    #     config = json.load(file)
-    # email(config,"hello","I am 1163")
-    main()
+    with open('set.json', 'r') as file:
+        config = json.load(file)
+    email(config,"hello","I am 1163")
+    
+    # main()
