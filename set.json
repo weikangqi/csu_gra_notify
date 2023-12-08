@@ -4,7 +4,8 @@
       "mail_user": "kangqi_wei@163.com",
       "mail_pass": "EAYXLPTTIGYHSTPS",
       "sender": "kangqi_wei@163.com",
-      "receivers": ["3271045267@qq.com"],
+      "receivers": ["3271045267@qq.com","tomqii996@gmail.com"],
+      "testreceivers": ["3271045267@qq.com","tomqii996@gmail.com"],
       "title":"CSU_Graduate_News"
     },
     "website":"https://gra.csu.edu.cn/yjsytz.htm",
